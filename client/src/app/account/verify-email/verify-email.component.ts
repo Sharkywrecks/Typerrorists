@@ -24,17 +24,6 @@ export class VerifyEmailComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const userId = params['userId'];
       const token = params['token'];
-
-      if (token && userId) {
-        this.accountService.verifyEmail(token, userId).subscribe({
-          next: () => {
-            this.verificationSuccessesful = true;
-            setTimeout(() => {
-            this.router.navigateByUrl('/instructions');
-            }, 3000);
-          }
-       });
-      }
     });
   }
 }

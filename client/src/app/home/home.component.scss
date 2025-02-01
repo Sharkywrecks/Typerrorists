@@ -1,4 +1,32 @@
 p-autocomplete {
     display: flex;
     justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 90%;
+}
+
+app-storm-search {
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+.search-btn {
+    width: 38px;
+    height: 38px;
+    background-color: #44c7df;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.input-group {
+    height: 90%;
+    width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
 }

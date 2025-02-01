@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Core.Entities.Identity;
 using API.Extensions;
+using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -26,36 +27,82 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [Cached(600)]
+        //[Cached(600)]
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<IReadOnlyList<BrainStormSessionDto>>> GetSessions()
         {
-            var user = await _userManager.FindByEmailFromClaimsPrinciple(HttpContext.User);
+            /*var user = await _userManager.FindByEmailFromClaimsPrinciple(HttpContext.User);
             if (user == null)
             {
                 return NotFound(new ApiResponse(404, "User not found"));
-            }
-            var spec = new BrainStormSpecification(user.Id);
+            }*/
+            // var spec = new BrainStormSpecification(user.Id);
+            var spec = new BrainStormSpecification("1");
             var brainStormSession = await _unitOfWork.Repository<BrainStormSession>().GetEntityWithSpec(spec);
             var storms = _mapper.Map<IReadOnlyList<BrainStormSessionDto>>(brainStormSession);
             return Ok(storms);
         }
         
-        [Cached(600)]
-        [HttpGet("storm/{id}")]
-        [Authorize]
+        //[Cached(600)]
+        [HttpGet("storm")]
+        //[Authorize]
         public async Task<ActionResult<IReadOnlyList<StormDto>>> GetStorms(string parentStormId)
         {
-            var user = await _userManager.FindByEmailFromClaimsPrinciple(HttpContext.User);
+            /*var user = await _userManager.FindByEmailFromClaimsPrinciple(HttpContext.User);
             if (user == null)
             {
                 return NotFound(new ApiResponse(404, "User not found"));
-            }
+            }*/
             var spec = new StormSpecification(parentStormId);
             var storms = await _unitOfWork.Repository<Storm>().GetEntityWithSpec(spec);
             var stormChildren = _mapper.Map<IReadOnlyList<StormDto>>(storms);
             return Ok(stormChildren);
+        }
+
+        [HttpPost("create-storm")]
+        //[Authorize]
+        public async Task<ActionResult<IReadOnlyList<StormDto>>> GetAiSuggestions(string prompt)
+        {
+            string context = "1,-1,This is a parent 2,1,This is 1st child 3,1,This is 2nd child 4,2,This is 1st childs grandchild";
+            string exclude = "";
+
+        // Prepare process info
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "python",
+            Arguments = $"./Scripts/main.py \"{context}\" \"{prompt}\" \"{exclude}\"",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        var suggestions = new List<StormDto>();
+
+        using (var process = new Process { StartInfo = startInfo })
+            {
+                // Start
+                process.Start();
+
+                // Read output and errors
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                process.WaitForExit();
+                Console.WriteLine(output);
+                var result = output.Split(",");
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    suggestions.Add(new StormDto
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Text = result[i]
+                    });
+                }
+            }
+            return Ok(suggestions);
         }
     }
 }

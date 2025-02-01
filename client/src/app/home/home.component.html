@@ -1,5 +1,29 @@
-<div class="container align-content-center d-flex flex-column justify-content-center login-container" style="height: 60vh;">
+<div class="container align-content-center d-flex flex-column justify-content-center login-container">
   <div class="row justify-content-center">
-      <p-autocomplete [(ngModel)]="value" [dropdown]="true" [suggestions]="items || []" (completeMethod)="search($event)" [size]="'large'"/>
+    <app-storm-search></app-storm-search>
+    <!-- <p-autocomplete 
+    [(ngModel)]="value" 
+    [dropdown]="true" 
+    [suggestions]="items || []" 
+    (completeMethod)="search($event)" 
+    [size]="'large'"
+    [autofocus]="true"
+    placeholder="I'm thinking..."
+    /> -->
+    <div class="input-group" data-mdb-input-init>
+      <input class="form-control" (keyup.enter)="onSearch()" placeholder="I need suggestions for..." type="search"
+        #search>
+
+      <span class="input-group-addon">
+        <button (click)="onSearch()" class="search-btn data-mdb-ripple-init">
+          <i class="fa fa-search"></i>
+        </button>
+      </span>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-4">
+    <div *ngFor="let storm of storms" class="col-md-4 mb-3">
+      <app-storm [text]="storm.text"></app-storm>
+    </div>
   </div>
 </div>

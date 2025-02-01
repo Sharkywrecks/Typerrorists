@@ -347,11 +347,8 @@ export class Client {
      * @param parentStormId (optional) 
      * @return OK
      */
-    storm(parentStormId: string | undefined, id: string): Observable<StormDto[]> {
-        let url_ = this.baseUrl + "/api/BrainStormSession/storm/{id}?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+    storm(parentStormId: string | undefined): Observable<StormDto[]> {
+        let url_ = this.baseUrl + "/api/BrainStormSession/storm?";
         if (parentStormId === null)
             throw new Error("The parameter 'parentStormId' cannot be null.");
         else if (parentStormId !== undefined)
@@ -381,6 +378,61 @@ export class Client {
     }
 
     protected processStorm(response: HttpResponseBase): Observable<StormDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as StormDto[];
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param prompt (optional) 
+     * @return OK
+     */
+    createStorm(prompt: string | undefined): Observable<StormDto[]> {
+        let url_ = this.baseUrl + "/api/BrainStormSession/create-storm?";
+        if (prompt === null)
+            throw new Error("The parameter 'prompt' cannot be null.");
+        else if (prompt !== undefined)
+            url_ += "prompt=" + encodeURIComponent("" + prompt) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateStorm(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateStorm(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<StormDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<StormDto[]>;
+        }));
+    }
+
+    protected processCreateStorm(response: HttpResponseBase): Observable<StormDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
