@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { IUser } from '../shared/models/user';
-import { AddressDto, Client } from '../client.api';
+import { Client } from '../client.api';
 
 @Injectable({
   providedIn: 'root'
@@ -75,13 +75,5 @@ export class AccountService {
 
   checkEmailExists(email: string) {
     return this.client.emailexists(email);
-  }
-
-  getUserAddress() {
-    return this.client.addressGET();
-  }
-
-  updateUserAddress(address: AddressDto) {
-    return this.client.addressPUT(address);
   }
 }
