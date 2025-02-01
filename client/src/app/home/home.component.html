@@ -1,5 +1,14 @@
-<div class="container align-content-center d-flex flex-column justify-content-center login-container" style="height: 60vh;">
+<div class="container align-content-center d-flex flex-column justify-content-center login-container">
   <div class="row justify-content-center">
-      <p-autocomplete [(ngModel)]="value" [dropdown]="true" [suggestions]="items || []" (completeMethod)="search($event)" [size]="'large'"/>
+    <app-storm></app-storm>
+    <p-autocomplete 
+    [(ngModel)]="value" 
+    [dropdown]="true" 
+    [suggestions]="items || []" 
+    (completeMethod)="search($event)" 
+    [size]="'large'"
+    [autofocus]="true"
+    placeholder="I'm thinking..."
+    />
   </div>
 </div>

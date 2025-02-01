@@ -3,6 +3,7 @@ import { SharedModule } from '../shared/components/shared.module';
 import { isPlatformBrowser } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { StormComponent } from "../storm/storm.component";
 
 interface AutoCompleteCompleteEvent {
   originalEvent: Event;
@@ -11,7 +12,7 @@ interface AutoCompleteCompleteEvent {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ SharedModule,AutoCompleteModule ],
+  imports: [SharedModule, AutoCompleteModule, StormComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

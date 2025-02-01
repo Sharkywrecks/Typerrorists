@@ -1,4 +1,15 @@
 p-autocomplete {
     display: flex;
     justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 90%;
+}
+
+app-storm {
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
 }
