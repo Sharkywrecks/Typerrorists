@@ -44,26 +44,16 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("BrainStormSessionId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("ParentId")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("StormId")
-                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BrainStormSessionId");
-
-                    b.HasIndex("StormId");
 
                     b.ToTable("Storms");
                 });
@@ -85,27 +75,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StormChildren");
-                });
-
-            modelBuilder.Entity("Core.Entities.Storm", b =>
-                {
-                    b.HasOne("Core.Entities.BrainStormSession", null)
-                        .WithMany("Storms")
-                        .HasForeignKey("BrainStormSessionId");
-
-                    b.HasOne("Core.Entities.Storm", null)
-                        .WithMany("Storms")
-                        .HasForeignKey("StormId");
-                });
-
-            modelBuilder.Entity("Core.Entities.BrainStormSession", b =>
-                {
-                    b.Navigation("Storms");
-                });
-
-            modelBuilder.Entity("Core.Entities.Storm", b =>
-                {
-                    b.Navigation("Storms");
                 });
 #pragma warning restore 612, 618
         }

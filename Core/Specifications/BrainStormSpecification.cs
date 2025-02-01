@@ -11,12 +11,10 @@ namespace Core.Specifications
     {
         public BrainStormSpecification(string userId) : base(o => o.UserId.Equals(userId))
         {
-            AddInclude(o => o.Storms);
         }
 
         public BrainStormSpecification(string userId, string BrainStormId) : base(o => o.Id.Equals(BrainStormId) && o.UserId.Equals(userId))
         {
-            AddInclude(o => o.Storms);
         }
     }
 }

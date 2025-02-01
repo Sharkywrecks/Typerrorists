@@ -29,7 +29,7 @@ namespace Infrastructure.Data
                 // Seed Brands
                 if (!context.Storms.Any())
                 {
-                    await SeedEntityAsync<Storm>(context, path, "storm.csv", logger);
+                    await SeedEntityAsync<Storm>(context, path, "storms.csv", logger);
                 }
 
                 if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();

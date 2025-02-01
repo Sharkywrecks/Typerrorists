@@ -6,6 +6,6 @@ namespace Core.Entities
         public required string ParentId { get; set; }
         public required string SessionName { get; set; }
         // Navigation properties for one-to-many relationships
-        public ICollection<Storm> Storms { get; set; } = new List<Storm>();
+        // public ICollection<Storm> Storms { get; set; } = new List<Storm>();
     }
 }

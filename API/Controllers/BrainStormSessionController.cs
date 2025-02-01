@@ -38,7 +38,7 @@ namespace API.Controllers
             }
             var spec = new BrainStormSpecification(user.Id);
             var brainStormSession = await _unitOfWork.Repository<BrainStormSession>().GetEntityWithSpec(spec);
-            var storms = _mapper.Map<IReadOnlyList<StormDto>>(brainStormSession.Storms);
+            var storms = _mapper.Map<IReadOnlyList<BrainStormSessionDto>>(brainStormSession);
             return Ok(storms);
         }
         
@@ -53,8 +53,8 @@ namespace API.Controllers
                 return NotFound(new ApiResponse(404, "User not found"));
             }
             var spec = new StormSpecification(parentStormId);
-            var storm = await _unitOfWork.Repository<Storm>().GetEntityWithSpec(spec);
-            var stormChildren = _mapper.Map<IReadOnlyList<StormDto>>(storm.Storms);
+            var storms = await _unitOfWork.Repository<Storm>().GetEntityWithSpec(spec);
+            var stormChildren = _mapper.Map<IReadOnlyList<StormDto>>(storms);
             return Ok(stormChildren);
         }
     }

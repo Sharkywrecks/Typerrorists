@@ -43,47 +43,25 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false),
                     ParentId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Text = table.Column<string>(type: "TEXT", nullable: false),
-                    BrainStormSessionId = table.Column<string>(type: "varchar(255)", nullable: true),
-                    StormId = table.Column<string>(type: "varchar(255)", nullable: true)
+                    Text = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Storms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Storms_BrainStormSessions_BrainStormSessionId",
-                        column: x => x.BrainStormSessionId,
-                        principalTable: "BrainStormSessions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Storms_Storms_StormId",
-                        column: x => x.StormId,
-                        principalTable: "Storms",
-                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Storms_BrainStormSessionId",
-                table: "Storms",
-                column: "BrainStormSessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Storms_StormId",
-                table: "Storms",
-                column: "StormId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BrainStormSessions");
+
+            migrationBuilder.DropTable(
                 name: "StormChildren");
 
             migrationBuilder.DropTable(
                 name: "Storms");
-
-            migrationBuilder.DropTable(
-                name: "BrainStormSessions");
         }
     }
 }

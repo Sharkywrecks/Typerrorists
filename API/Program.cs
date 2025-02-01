@@ -12,14 +12,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
-/*
-builder.WebHost.UseKestrel(options =>
-{
-    options.ListenAnyIP(5002, listenOptions => listenOptions.UseHttps()); // HTTPS port
-});
-*/
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 if (builder.Environment.IsDevelopment())
@@ -90,14 +83,18 @@ using (var scope = app.Services.CreateScope())
     var logger = loggerFactory.CreateLogger<Program>();
     try
     {
-        var userManager = services.GetRequiredService<UserManager<AppUser>>();
-        var identityContext = services.GetRequiredService<AppIdentityDbContext>();
-        await identityContext.Database.MigrateAsync();
-        await AppIdentityDbContextSeed.SeedUsersAsync(userManager); 
-
         var context = services.GetRequiredService<BrainContext>();
         await context.Database.MigrateAsync();
         await BrainContextSeed.SeedAsync(context, loggerFactory);
+
+        var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+        await identityContext.Database.MigrateAsync();
+
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await AppIdentityDbContextSeed.SeedUsersRolesAsync(roleManager);
+
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        await AppIdentityDbContextSeed.SeedUsersAsync(userManager); 
     }
     catch (Exception ex)
     {
