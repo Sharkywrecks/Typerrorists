@@ -6,9 +6,9 @@ namespace Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly StoreContext _context;
+        private readonly BrainContext _context;
         private Hashtable _repositories;
-        public UnitOfWork(StoreContext context)
+        public UnitOfWork(BrainContext context)
         {
             _context = context;
             _repositories = new Hashtable();

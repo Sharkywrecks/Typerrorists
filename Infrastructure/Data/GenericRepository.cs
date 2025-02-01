@@ -8,8 +8,8 @@ namespace Infrastructure.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private readonly StoreContext _context;
-        public GenericRepository(StoreContext context)
+        private readonly BrainContext _context;
+        public GenericRepository(BrainContext context)
         {
             _context = context;
         }

@@ -1,0 +1,5 @@
+<div class="container align-content-center d-flex flex-column justify-content-center login-container" style="height: 60vh;">
+  <div class="row justify-content-center">
+      <p-autocomplete [(ngModel)]="value" [dropdown]="true" [suggestions]="items || []" (completeMethod)="search($event)" [size]="'large'"/>
+  </div>
+</div>

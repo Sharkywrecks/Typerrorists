@@ -1,0 +1,39 @@
+.arrow-right-icon {
+    width: 6px;
+}
+
+.back-arrow-icon {
+    width: 15px;
+}
+
+.section-container {
+    width: 100%;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+xng-breadcrumb {
+    width: fit-content;
+    align-items: center;
+}
+
+.back-container {
+    display: flex;
+    align-content: center;
+    column-gap: 5px;
+    justify-content: flex-end;
+    cursor: pointer;
+
+    span {
+        width: 67px;
+        color: rgba(0, 0, 0, 1);
+        font-family: Poppins;
+        font-weight: bold;
+        font-size: 15px;
+        opacity: 1;
+    }
+    &:hover {
+        text-decoration: underline;
+    }
+}

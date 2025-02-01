@@ -1,7 +1,6 @@
 using AutoMapper;
 using API.Dtos;
 using Core.Entities;
-using Core.Entities.OrderAggregate;
 
 
 namespace API.Helpers
@@ -10,7 +9,9 @@ namespace API.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<Product, ProductToReturnDto>()
+            CreateMap<BrainStormSession, BrainStormSessionDto>();
+            CreateMap<Storm, StormDto>();
+            /*CreateMap<Product, ProductToReturnDto>()
                 .ForMember(d => d.ProductBrand, o => o.MapFrom(s => s.ProductBrand.Brand))
                 .ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType.Type))
                 .ForMember(d => d.PictureUrls, o => o.MapFrom<ProductUrlResolver>())
@@ -29,7 +30,7 @@ namespace API.Helpers
                 .ForMember(d => d.ProductName, o => o.MapFrom(s => s.ItemOrdered.ProductName))
                 .ForMember(d => d.ProductColour, o => o.MapFrom(s => s.ItemOrdered.ProductColour))
                 .ForMember(d => d.ProductSize, o => o.MapFrom(s => s.ItemOrdered.ProductSize))
-                .ForMember(d => d.PictureUrl, o => o.MapFrom<OrderItemUrlResolver>());
+                .ForMember(d => d.PictureUrl, o => o.MapFrom<OrderItemUrlResolver>());*/
         }
     }
 }

@@ -3,12 +3,10 @@ import { CommonModule } from '@angular/common';
 import { PagerComponent } from './pager/pager.component';
 import { PagingHeaderComponent } from './paging-header/paging-header.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
-import { OrderTotalsComponent } from './order-totals/order-totals.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { RouterModule } from '@angular/router';
 import { CdkStepperModule } from '@angular/cdk/stepper';
-import { BasketSummaryComponent } from './basket-summary/basket-summary.component';
 
 
 
@@ -21,11 +19,9 @@ import { BasketSummaryComponent } from './basket-summary/basket-summary.componen
     PagingHeaderComponent,
     CarouselModule.forRoot(),
     BsDropdownModule.forRoot(),
-    OrderTotalsComponent,
     ReactiveFormsModule,
     FormsModule,
     CdkStepperModule,
-    BasketSummaryComponent
   ],
   exports: [
     CommonModule,
@@ -34,11 +30,9 @@ import { BasketSummaryComponent } from './basket-summary/basket-summary.componen
     PagingHeaderComponent,
     CarouselModule,
     BsDropdownModule,
-    OrderTotalsComponent,
     ReactiveFormsModule,
     FormsModule,
     CdkStepperModule,
-    BasketSummaryComponent
   ]
 })
 

@@ -15,41 +15,6 @@ namespace Infrastructure.Identity
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            /*builder.Entity<AppUser>(b =>
-            {
-                b.ToTable("AppUsers");
-            });
-
-            builder.Entity<IdentityRole>(b =>
-            {
-                b.ToTable("AppRoles");
-            });
-
-            builder.Entity<IdentityUserRole<string>>(b =>
-            {
-                b.ToTable("AppUserRoles");
-            });
-
-            builder.Entity<IdentityUserClaim<string>>(b =>
-            {
-                b.ToTable("AppUserClaims");
-            });
-
-            builder.Entity<IdentityUserLogin<string>>(b =>
-            {
-                b.ToTable("AppUserLogins");
-            });
-
-            builder.Entity<IdentityRoleClaim<string>>(b =>
-            {
-                b.ToTable("AppRoleClaims");
-            });
-
-            builder.Entity<IdentityUserToken<string>>(b =>
-            {
-                b.ToTable("AppUserTokens");
-            });*/
         }
     }
 }

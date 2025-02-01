@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedModule } from '../../shared/components/shared.module';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from '../account.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { TextInputComponent } from '../../shared/components/text-input/text-input.component';
+import { SharedModule } from '../../shared/components/shared.module';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [SharedModule, TextInputComponent],
+  imports: [ SharedModule, TextInputComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

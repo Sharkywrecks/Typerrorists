@@ -24,7 +24,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddDbContext<StoreContext>(options =>
+    builder.Services.AddDbContext<BrainContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     builder.Services.AddDbContext<AppIdentityDbContext>(options =>
@@ -35,7 +35,7 @@ if (builder.Environment.IsDevelopment())
 else
 {
     var version = new Version(8, 0, 21);
-    builder.Services.AddDbContext<StoreContext>(options =>
+    builder.Services.AddDbContext<BrainContext>(options =>
         options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(version)));
 
     builder.Services.AddDbContext<AppIdentityDbContext>(options =>
@@ -62,7 +62,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:5002");
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:5004");
     });
 });
 
@@ -75,7 +75,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.Urls.Add("http://localhost:5002");
+app.Urls.Add("http://localhost:5004");
 
 // Configure logging
 builder.Logging.AddConsole(); // Adds console logging
@@ -90,9 +90,14 @@ using (var scope = app.Services.CreateScope())
     var logger = loggerFactory.CreateLogger<Program>();
     try
     {
-        var context = services.GetRequiredService<StoreContext>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+        await identityContext.Database.MigrateAsync();
+        await AppIdentityDbContextSeed.SeedUsersAsync(userManager); 
+
+        var context = services.GetRequiredService<BrainContext>();
         await context.Database.MigrateAsync();
-        await StoreContextSeed.SeedAsync(context, loggerFactory);
+        await BrainContextSeed.SeedAsync(context, loggerFactory);
     }
     catch (Exception ex)
     {

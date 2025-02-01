@@ -1,0 +1,26 @@
+@if (breadcrumb$ | async; as breadcrumbs) {
+    @if (breadcrumbs.length > 0 && breadcrumbs[breadcrumbs.length-1].label !== 'Home') {
+        <section class="py-2">
+            <div class="container">
+                <div class="section-container">
+                    <xng-breadcrumb [separator]="separatortemplate"></xng-breadcrumb>
+                    <div class="back-container" (click)="goBack()">
+                        <img class="back-arrow-icon" src="assets/icons/back-arrow-icon.svg" alt=">">
+                        <span>Back</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+}
+
+<ng-template #separatortemplate>
+    <img class="arrow-right-icon" src="assets/icons/arrow-right-icon.svg" alt=">">
+</ng-template>
+
+<ng-template #itemtemplate let-breadcrumb let-isLast="last">
+    <span [ngStyle]="{ color: isLast ? 'red' : 'inherit' }">
+      {{ breadcrumb.label }}
+    </span>
+</ng-template>
+

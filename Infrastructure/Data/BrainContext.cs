@@ -1,7 +1,6 @@
 using System.Reflection;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data
@@ -11,8 +10,10 @@ namespace Infrastructure.Data
         public BrainContext(DbContextOptions<BrainContext> options) : base(options)
         {
         }
-
-        // public DbSet<Product> Products { get; set; }
+        
+        public DbSet<BrainStormSession> BrainStormSessions { get; set; }
+        public DbSet<Storm> Storms { get; set; }
+        public DbSet<StormChild> StormChildren { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
