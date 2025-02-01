@@ -1,0 +1,19 @@
+<div class="container">
+    <ul class="nav nav-pills nav-justified">
+        @for (step of steps; track step; let i = $index) {
+            <li class="nav-item">
+                <button 
+                    (click)="onClick(i)"
+                    [disabled]="true"
+                    [class.active]="selectedIndex === i"
+                    class="nav-link text-uppercase fw-bold btn-block" style="padding: 1.20em;">
+                    {{step.label}}
+                </button>
+            </li>
+        }
+        
+    </ul>
+    @if (selected) {
+        <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
+    }
+</div>

@@ -1,0 +1,37 @@
+<div class="container vh-100 d-flex flex-column justify-content-center login-container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4">
+        <main class="form-signin w-100 m-auto">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+
+                <app-text-input [formControl]="emailControl" [label]="'Email Address'" [type]="'email'"></app-text-input>
+                <app-text-input [formControl]="passwordControl" [label]="'Registration Number'" [type]="'password'"></app-text-input>
+                <!-- <div class="form-check text-start my-3">
+                <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Remember me
+                </label>
+                </div> -->
+                <button class="btn btn-primary w-100 py-2" type="submit" [disabled]="loginForm.invalid">Sign in</button>
+            </form>
+        </main>
+    </div>
+
+    <div class="text-center">
+        <br>
+        @if (!emailConfirmationSent) {
+        <span>Login with your email address and registration number above. This site is currently under development so in the event 
+            that you are unable to login or are facing any difficulties, please contact the administrator.
+        </span>
+        <br>
+        <span>Note that at this moment, reloading the candidate page may cause unexpected errors which can be resolved by logging back in.
+        </span>
+        } @else {
+        <span>An email has been sent to your email address. Please check your inbox and click the link to verify your email address. If it is not in your inbox,
+            please check your spam/junk folder.
+        </span>
+        }
+    </div>
+</div>
+</div>

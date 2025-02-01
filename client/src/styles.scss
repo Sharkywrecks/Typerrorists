@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css";
+//@import "../node_modules/bootswatch/dist/united/bootstrap.min.css";
+@import "../node_modules/font-awesome/css/font-awesome.min.css";
+@import "../node_modules/ngx-spinner/animations/ball-clip-rotate.css";
+@import "../node_modules/ngx-toastr/toastr.css";
+@import url("https://fonts.googleapis.com/css?family=Poppins&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Konkhmer+Sleokchher&display=swap");
+
+xng-breadcrumb {
+    width: 67px;
+    color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    top: 0px;
+    left: 0px;
+    font-family: Poppins;
+    font-weight: Regular;
+    font-size: 15px;
+    opacity: 1;
+    text-align: left;
+}
+
+.xng-breadcrumb-list li:last-child {
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+}
+
+select {
+    cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6, span, strong {
+    font-family: Poppins;
+    color: rgba(0, 0, 0, 1);
+}
+
+p-carousel {
+    --p-button-text-primary-color: #2d8a9b;
+    --p-carousel-indicator-active-background: #44c7df;
+}
+
+p-rating {
+    --p-rating-icon-color: black;
+    --p-rating-icon-active-color: #ffd700;
+}

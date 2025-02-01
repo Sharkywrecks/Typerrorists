@@ -1,0 +1,17 @@
+<div class="container vh-100 d-flex flex-column justify-content-center login-container">
+    <div class="row justify-content-center">
+        <div class="text-center">
+            @if (verificationSuccessesful)
+            {
+                <h2>Email confirmed successfully!</h2>
+                <p>You will now be redirected to the instructions page.</p>
+            }
+            @else
+            {
+                <h2>Error confirming email</h2>
+                <p>There was an issue confirming your email.</p>
+                <button class="btn btn-primary w-10 py-2" routerLink="/login">Go back to login</button>
+            }
+        </div>
+    </div>
+</div>
