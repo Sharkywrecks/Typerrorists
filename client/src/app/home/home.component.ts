@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   links: Edge[] = [];
 
   nodes: Node[] = [];
-  
+  files!: any;
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     private brainStormSessionService: BrainStormSessionService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -92,7 +92,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onBasicUploadAuto(event: any) {
-    this.brainStormSessionService.createSchemaFile(event.files[0]).subscribe(() => {
+    this.brainStormSessionService.createSchemaFile(event.files[0]).subscribe((files) => {
+      this.files = files;
       this.toastrService.success('File uploaded successfully');
     });
   }

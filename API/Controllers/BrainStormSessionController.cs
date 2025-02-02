@@ -107,7 +107,7 @@ namespace API.Controllers
 
         [HttpPost("create-database-schema")]
         //[Authorize]
-        public async Task<ActionResult> CreateDatabaseSchema(IFormFile image)
+        public async Task<ActionResult<PhysicalFileResult>> CreateDatabaseSchema(IFormFile image)
         {   
             if (image == null || image.Length == 0)
             {
@@ -131,7 +131,44 @@ namespace API.Controllers
                 CreateNoWindow = true
             };
 
-            return Ok();
+            var schemaFiles = new List<string>();
+
+            using (var process = new Process { StartInfo = startInfo })
+            {
+                // Start
+                process.Start();
+
+                // Read output and errors
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                process.WaitForExit();
+                Console.WriteLine(output);
+                var result = output.Split(",");
+
+                foreach (var file in result)
+                {
+                    schemaFiles.Add(file.Trim());
+                }
+            }
+
+            if (schemaFiles.Count == 2)
+            {
+                var file1 = Path.Combine("Content/schemas", schemaFiles[0]);
+                var file2 = Path.Combine("Content/schemas", schemaFiles[1]);
+
+                var files = new List<PhysicalFileResult>
+                {
+                    PhysicalFile(file1, "application/octet-stream"),
+                    PhysicalFile(file2, "application/octet-stream")
+                };
+
+                return Ok(files);
+            }
+            else
+            {
+                return BadRequest(new ApiResponse(400, "Schema generation failed"));
+            }
         }
     }
 }

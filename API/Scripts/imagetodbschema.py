@@ -139,7 +139,8 @@ class SchemaVisualizer:
             dot.edge(src, dst)
         
         output_filename = "database_schema"
-        dot.render(output_filename, view=True)
+        output_path = f"../Content/schema/{output_filename}"
+        dot.render(output_path, view=True)
         print(f"✅ Database schema digraph saved as '{output_filename}.png'.")
 
     def run(self, schema_type):

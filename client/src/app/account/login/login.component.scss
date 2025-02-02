@@ -1,10 +1,42 @@
-.text-center {
-    text-align: center;
-    margin: 0 auto;
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .form-check {
+        width: fit-content;
+        margin-left: 20px;
+    }
+
+    a {
+        width: fit-content;
+        margin-left: auto;
+    }
 }
 
-@media (max-width: 767.98px) { /* Bootstrap's breakpoint for small devices */
-    .login-container {
-        padding-top: 40vh;
+a {
+    span {
+        color: #0463c9;
+        
+        &:hover {
+            text-decoration: underline;
+        }
     }
+}
+
+button {
+    span {
+        color: white;
+    }
+}
+
+.submit-btn {
+    margin-top: 20px;
+}
+
+.account {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
