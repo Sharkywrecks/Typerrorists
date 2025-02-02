@@ -114,7 +114,7 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "No image uploaded"));
             }
 
-            var filePath = Path.Combine("Content", "brainstorm.png");
+            var filePath = Path.Combine("Content/images", "brainstorm.png");
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {

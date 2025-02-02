@@ -49,12 +49,7 @@ export class BrainStormSessionService {
   }
 
   createSchemaFile(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-    return this.client.createSchemaFile(formData).pipe(
-      map(() => {
-        return;
-      })
-    );
+    const fileParameter = { data: file, fileName: file.name };
+    return this.client.createDatabaseSchema(fileParameter);
   }
 }

@@ -92,7 +92,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onBasicUploadAuto(event: any) {
-    this.brainStormSessionService(event.files[0].name).subscribe(storms => {
+    this.brainStormSessionService.createSchemaFile(event.files[0]).subscribe(() => {
       this.toastrService.success('File uploaded successfully');
     });
   }

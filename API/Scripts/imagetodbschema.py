@@ -4,6 +4,7 @@ import re
 import time
 from graphviz import Digraph
 from PIL import Image, UnidentifiedImageError
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -157,6 +158,6 @@ class SchemaVisualizer:
 
 if __name__ == "__main__":
     # Create an instance of SchemaVisualizer with your image file.
-    visualizer = SchemaVisualizer("brainstorm.png")
+    visualizer = SchemaVisualizer("../Content/images/brainstorm.png")
     # Run the visualizer for a "database" schema.
     visualizer.run("database")
