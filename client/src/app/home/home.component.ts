@@ -3,9 +3,7 @@ import { SharedModule } from '../shared/components/shared.module';
 import { isPlatformBrowser } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { StormComponent } from "../storm/storm.component";
 import { BrainStormSessionService } from './brain-storm-session.service';
-import { StormSearchComponent } from '../storm-search/storm-search.component';
 import { Node, Edge, NgxGraphModule } from '@swimlane/ngx-graph';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
@@ -21,9 +19,7 @@ interface UploadEvent {
   selector: 'app-home',
   standalone: true,
   imports: [SharedModule, 
-    AutoCompleteModule, 
-    StormSearchComponent, 
-    StormComponent, 
+    AutoCompleteModule,
     NgxGraphModule, 
     FileUploadModule,
     ButtonModule

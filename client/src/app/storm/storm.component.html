@@ -1,7 +1,0 @@
-<div class="image-container" (click)="onSearch()">
-    <img [src]="imageUrl" alt="Brainstorm" class="storm-image">
-    <p class="storm-text">{{ text }}</p>
-</div>
-<div *ngFor="let storm of storms" class="col-md-4 mb-3">
-    <app-storm [text]="storm.text"></app-storm>
-</div>
