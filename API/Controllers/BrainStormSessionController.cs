@@ -71,7 +71,7 @@ namespace API.Controllers
         var startInfo = new ProcessStartInfo
         {
             FileName = "python",
-            Arguments = $"./Scripts/main.py \"{context}\" \"{prompt}\" \"{exclude}\"",
+            Arguments = $"./Scripts/mindmap.py \"{context}\" \"{prompt}\" \"{exclude}\"",
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -103,6 +103,35 @@ namespace API.Controllers
                 }
             }
             return Ok(suggestions);
+        }
+
+        [HttpPost("create-database-schema")]
+        //[Authorize]
+        public async Task<ActionResult> CreateDatabaseSchema(IFormFile image)
+        {   
+            if (image == null || image.Length == 0)
+            {
+                return BadRequest(new ApiResponse(400, "No image uploaded"));
+            }
+
+            var filePath = Path.Combine("Content", "brainstorm.png");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+            // Prepare process info
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "python",
+                Arguments = $"./Scripts/imagetodbschema.py",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            return Ok();
         }
     }
 }

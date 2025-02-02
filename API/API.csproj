@@ -23,6 +23,7 @@
   
   <ItemGroup>
     <Content Include="Content\**" CopyToPublishDirectory="PreserveNewest"/>
+    <None Include="Scripts\**" CopyToPublishDirectory="PreserveNewest"/>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
   </ItemGroup>
 

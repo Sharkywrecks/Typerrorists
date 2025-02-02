@@ -1,58 +1,99 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { SharedModule } from '../shared/components/shared.module';
 import { isPlatformBrowser } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { StormComponent } from "../storm/storm.component";
 import { BrainStormSessionService } from './brain-storm-session.service';
 import { StormSearchComponent } from '../storm-search/storm-search.component';
+import { Node, Edge, NgxGraphModule } from '@swimlane/ngx-graph';
+import { FileUploadModule } from 'primeng/fileupload';
+import { ToastrService } from 'ngx-toastr';
 
-interface AutoCompleteCompleteEvent {
+interface UploadEvent {
   originalEvent: Event;
-  query: string;
+  files: File[];
 }
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SharedModule, AutoCompleteModule, StormSearchComponent, StormComponent],
+  imports: [SharedModule, AutoCompleteModule, StormSearchComponent, StormComponent, NgxGraphModule, FileUploadModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('search', {static: false}) searchTerm!: ElementRef;
+  update$: Subject<any> = new Subject();
 
   storms: any[] | undefined;
   value: any;
+  previousNode: string = '';
   isBrowser: boolean;
   brainStormSessionSubscription!: Subscription;
 
+  count = 0;
+  query = '';
+
+  links: Edge[] = [];
+
+  nodes: Node[] = [];
+  
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
-    private brainStormSessionService: BrainStormSessionService) {
+    private brainStormSessionService: BrainStormSessionService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private toastrService: ToastrService,) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
+
   ngOnInit() {
   }
 
   ngOnDestroy() {
     this.brainStormSessionSubscription?.unsubscribe();
   }
-
-  search(event: AutoCompleteCompleteEvent) {
-    this.brainStormSessionSubscription?.unsubscribe();
-    /*this.brainStormSessionSubscription = this.brainStormSessionService.getBrainStormSessions().subscribe(sessions => {
-      this.storms = sessions ? [...sessions.map(session => session.sessionName)] : [];
-    });*/
-    this.brainStormSessionSubscription = this.brainStormSessionService.createStorm(event.query).subscribe(storms => {
-      this.storms = storms;
-    });
-  }
-
   
   onSearch() {
-    var query = this.searchTerm?.nativeElement.value;
-    this.brainStormSessionSubscription = this.brainStormSessionService.createStorm(query).subscribe(storms => {
-      this.storms = storms;
-      console.log(storms);
+    this.brainStormSessionSubscription?.unsubscribe();
+    if (this.searchTerm && this.searchTerm.nativeElement.value) {
+      this.query = this.searchTerm?.nativeElement.value;
+      this.searchTerm.nativeElement.value = '';
+      this.previousNode = '0';
+      this.nodes = [];
+      this.links = [];
+    }
+
+    this.brainStormSessionSubscription = this.brainStormSessionService.createStorm(this.query).subscribe(storms => {
+      this.nodes.push({
+        id: this.previousNode,
+        label: this.query,
+      });
+      storms.forEach((storm, index) => {
+        this.count++;
+        this.nodes.push({
+          id: storm.id,
+          label: storm.text,
+        });
+        this.links.push({
+          id: 'A' + storm.id,
+          source: this.previousNode,
+          target: storm.id,
+        });
+      });
+      this.storms = [...storms];
+    });
+    this.update$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  onNodeClick($event: any) {
+    this.previousNode = $event.id;
+    this.query = $event.label;
+    this.onSearch();
+  }
+
+  onBasicUploadAuto(event: any) {
+    this.brainStormSessionService(event.files[0].name).subscribe(storms => {
+      this.toastrService.success('File uploaded successfully');
     });
   }
 }
