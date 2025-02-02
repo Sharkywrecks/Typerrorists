@@ -15,10 +15,10 @@
     <div class="d-flex flex-column align-items my-3 py-2">
       <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onBasicUploadAutoSchema($event)" [auto]="true" chooseLabel="ImgToSchema" />
       <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onBasicUploadAutoCsv($event)" [auto]="true" chooseLabel="ImgToCsv" />
-      <ng-container *ngIf="files && files.length > 0">
-        <p-button class="btn" icon="pi pi-external-link" label="Schema" (click)="exportFiles()" />
-      </ng-container>
       <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="text/csv" maxFileSize="1000000" (onSelect)="onBasicUploadAutoCsvToMiniMap($event)" [auto]="true" chooseLabel="CsvToMiniMap" />
+      <ng-container *ngIf="files && files.length > 0">
+        <p-button class="btn" icon="pi pi-external-link" label="Download File" (click)="exportFiles()" />
+      </ng-container>
     </div>
     </div>
   </div>
