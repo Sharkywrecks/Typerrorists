@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { IUser } from '../shared/models/user';
-import { Client, StormDto } from '../client.api';
+import { Client, FileParameter, StormDto } from '../client.api';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +49,18 @@ export class BrainStormSessionService {
   }
 
   createSchemaFile(file: File): Observable<any> {
-    const fileParameter = { data: file, fileName: file.name };
+    const fileParameter: FileParameter = {
+      data: file,
+      fileName: file.name
+    };
     return this.client.createDatabaseSchema(fileParameter);
+  }
+
+  createSchemaCsv(file: File): Observable<any> {
+    const fileParameter: FileParameter = {
+      data: file,
+      fileName: file.name
+    };
+    return this.client.createDatabaseCsv(fileParameter);
   }
 }

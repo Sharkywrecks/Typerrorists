@@ -71,7 +71,8 @@ namespace API.Controllers
         var startInfo = new ProcessStartInfo
         {
             FileName = "python",
-            Arguments = $"./Scripts/mindmap.py \"{context}\" \"{prompt}\" \"{exclude}\"",
+            Arguments = $"mindmap.py \"{context}\" \"{prompt}\" \"{exclude}\"",
+            WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts"),
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -106,7 +107,7 @@ namespace API.Controllers
         }
 
         [HttpPost("create-database-schema")]
-        public async Task<IActionResult> CreateDatabaseSchema(IFormFile image)
+        public async Task<ActionResult<IReadOnlyList<string>>> CreateDatabaseSchema(IFormFile image)
         {   
             if (image == null || image.Length == 0)
             {
@@ -124,7 +125,8 @@ namespace API.Controllers
             var startInfo = new ProcessStartInfo
             {
                 FileName = "python",
-                Arguments = $"./Scripts/imagetodbschema.py",
+                Arguments = $"imagetodbschema.py",
+                WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts"),
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -143,14 +145,65 @@ namespace API.Controllers
                 string error = process.StandardError.ReadToEnd();
 
                 process.WaitForExit();
+                Console.WriteLine("Reached here");
                 Console.WriteLine(output);
             }
 
             // Generate file URLs instead of returning PhysicalFileResult
-            schemaFiles = new string[] {"database_schema", "database_schema.png"}.ToList();
-            var fileUrls = schemaFiles.Select(file => 
-                $"{Request.Scheme}://{Request.Host}/Content/schemas/{file}"
-            ).ToList();
+            var fileUrls = new List<string>();
+
+            fileUrls.Add($"{Request.Scheme}://{Request.Host}/Content/schemas/database_schema.png");
+
+            return Ok(fileUrls);
+        }
+
+        [HttpPost("create-database-csv")]
+        public async Task<ActionResult<IReadOnlyList<string>>> CreateDatabaseCsv(IFormFile image)
+        {   
+            if (image == null || image.Length == 0)
+            {
+                return BadRequest(new ApiResponse(400, "No image uploaded"));
+            }
+
+            var filePath = Path.Combine("Content", "images", "output.csv");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            // Run the Python script
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "python",
+                Arguments = $"imgtocsv.py",
+                WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts"),
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            var schemaFiles = new List<string>();
+
+            using (var process = new Process { StartInfo = startInfo })
+            {
+                // Start
+                process.Start();
+
+                // Read output and errors
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                process.WaitForExit();
+                Console.WriteLine("Reached here");
+                Console.WriteLine(output);
+            }
+
+            // Generate file URLs instead of returning PhysicalFileResult
+            var fileUrls = new List<string>();
+
+            fileUrls.Add($"{Request.Scheme}://{Request.Host}/Content/schemas/output.csv");
 
             return Ok(fileUrls);
         }

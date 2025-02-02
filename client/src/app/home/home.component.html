@@ -10,10 +10,16 @@
         </button>
       </span>
     </div>
-    <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="http://localhost:5004/Content" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="UploadToSchema" />
-    @if (files && files.length > 0) {
-      <p-button icon="pi pi-external-link" label="Schema" (click)="exportFiles()" />
-    }
+    <div class="col-md-4 ms-auto">
+      
+    <div class="d-flex flex-column align-items-center my-3 py-2">
+      <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onBasicUploadAutoSchema($event)" [auto]="true" chooseLabel="ImgToSchema" />
+      <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="image/*" maxFileSize="1000000" (onSelect)="onBasicUploadAutoCsv($event)" [auto]="true" chooseLabel="ImgToCsv" />
+      <ng-container *ngIf="files && files.length > 0">
+        <p-button class="btn" icon="pi pi-external-link" label="Schema" (click)="exportFiles()" />
+      </ng-container>
+    </div>
+    </div>
   </div>
   <ngx-graph
   class="chart-container"

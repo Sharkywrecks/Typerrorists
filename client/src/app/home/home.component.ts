@@ -10,6 +10,7 @@ import { Node, Edge, NgxGraphModule } from '@swimlane/ngx-graph';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
 import { ButtonModule } from 'primeng/button';
+import { HttpClient } from '@angular/common/http';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -49,7 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     private brainStormSessionService: BrainStormSessionService,
     private changeDetectorRef: ChangeDetectorRef,
-    private toastrService: ToastrService,) {
+    private toastrService: ToastrService, private http: HttpClient) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
@@ -99,15 +100,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onSearch();
   }
 
-  onBasicUploadAuto(event: any) {
-    console.log(event); // Debugging: Check what event.files[0] actually contains
-  
-    if (event.files && event.files.length > 0) {
-      const file = event.files[0]; // Extract first file
-  
+  onBasicUploadAutoSchema(event: any) {  
+    if (event.currentFiles && event.currentFiles.length > 0) {
+      const file = event.currentFiles[0]; // Extract first file
       if (file instanceof File) {
         this.brainStormSessionService.createSchemaFile(file).subscribe((files) => {
           this.files = files;
+          console.log('Files:', files);
+          this.toastrService.success('File uploaded successfully');
+        });
+      } else {
+        console.error('Uploaded object is not a valid File:', file);
+        this.toastrService.error('Invalid file format');
+      }
+    } else {
+      console.error('No files received');
+      this.toastrService.error('No file uploaded');
+    }
+  }
+
+  onBasicUploadAutoCsv(event: any) {
+    if (event.currentFiles && event.currentFiles.length > 0) {
+      const file = event.currentFiles[0]; // Extract first file
+      if (file instanceof File) {
+        this.brainStormSessionService.createSchemaCsv(file).subscribe((files) => {
+          this.files = files;
+          console.log('Files:', files);
           this.toastrService.success('File uploaded successfully');
         });
       } else {
@@ -122,15 +140,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   exportFiles() {
     if (this.files && this.files.length > 0) {
-      this.files.forEach((file: any) => {
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(file);
-        link.download = file.name;
-        link.click();
-        window.URL.revokeObjectURL(link.href);
+      this.files.forEach((fileUrl: string) => {
+        this.http.get(fileUrl, { responseType: 'blob' }).subscribe((blob) => {
+          const objectUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = objectUrl;
+          link.download = fileUrl.split('/').pop() || 'download';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(objectUrl);
+        }, error => {
+          this.toastrService.error(`Failed to download: ${fileUrl}`);
+        });
       });
+      this.files = [];
     } else {
       this.toastrService.error('No files available for download');
     }
   }
+  
 }

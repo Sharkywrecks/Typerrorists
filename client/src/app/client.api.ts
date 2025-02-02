@@ -457,7 +457,7 @@ export class Client {
      * @param image (optional) 
      * @return OK
      */
-    createDatabaseSchema(image: FileParameter | undefined): Observable<void> {
+    createDatabaseSchema(image: FileParameter | undefined): Observable<string[]> {
         let url_ = this.baseUrl + "/api/BrainStormSession/create-database-schema";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -472,6 +472,7 @@ export class Client {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Accept": "text/plain"
             })
         };
 
@@ -482,14 +483,14 @@ export class Client {
                 try {
                     return this.processCreateDatabaseSchema(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<string[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<string[]>;
         }));
     }
 
-    protected processCreateDatabaseSchema(response: HttpResponseBase): Observable<void> {
+    protected processCreateDatabaseSchema(response: HttpResponseBase): Observable<string[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -498,7 +499,67 @@ export class Client {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string[];
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param image (optional) 
+     * @return OK
+     */
+    createDatabaseCsv(image: FileParameter | undefined): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/BrainStormSession/create-database-csv";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (image === null || image === undefined)
+            throw new Error("The parameter 'image' cannot be null.");
+        else
+            content_.append("image", image.data, image.fileName ? image.fileName : "image");
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateDatabaseCsv(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateDatabaseCsv(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string[]>;
+        }));
+    }
+
+    protected processCreateDatabaseCsv(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string[];
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
