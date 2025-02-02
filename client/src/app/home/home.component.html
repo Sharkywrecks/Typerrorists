@@ -18,6 +18,7 @@
       <ng-container *ngIf="files && files.length > 0">
         <p-button class="btn" icon="pi pi-external-link" label="Schema" (click)="exportFiles()" />
       </ng-container>
+      <p-fileupload class="btn" mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept="text/csv" maxFileSize="1000000" (onSelect)="onBasicUploadAutoCsvToMiniMap($event)" [auto]="true" chooseLabel="ImgToMiniMap" />
     </div>
     </div>
   </div>

@@ -11,6 +11,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { ToastrService } from 'ngx-toastr';
 import { ButtonModule } from 'primeng/button';
 import { HttpClient } from '@angular/common/http';
+import { StormDto } from '../client.api';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -76,22 +77,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
     }
     this.brainStormSessionSubscription = this.brainStormSessionService.createStorm(this.query).subscribe(storms => {
-      storms.forEach((storm, index) => {
-        this.count++;
-        this.nodes.push({
-          id: storm.id,
-          label: storm.text,
-        });
-        this.links.push({
-          id: 'A' + storm.id,
-          source: this.previousNode,
-          target: storm.id,
-        });
-      });
-      this.storms = storms;
+      this.updateGraph(storms);
     });
-    this.update$.next(true);
-    this.changeDetectorRef.detectChanges();
   }
 
   onNodeClick($event: any) {
@@ -137,7 +124,62 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.toastrService.error('No file uploaded');
     }
   }
+
+  onBasicUploadAutoCsvToMiniMap(event: any) {
+    if (event.currentFiles && event.currentFiles.length > 0) {
+      const file = event.currentFiles[0];
+      if (file instanceof File) {
+        this.nodes = [];
+        this.links = [];
+        if (file && file.type === 'text/csv') {
+          const reader = new FileReader();
+      
+          reader.onload = (e) => {
+            const text = reader.result as string;
+            this.processCSV(text);
+          };
+      
+        reader.readAsText(file);
+        } else {
+          console.error('Uploaded object is not a valid File:', file);
+          this.toastrService.error('Invalid file format');
+        }
+      }
+    }
+  }
+  processCSV(csvText: string) {
+    const lines = csvText.split('\n'); // Split by line
+    const data = [];
   
+    for (let i = 0; i < lines.length; i++) {
+      const row = lines[i].trim();
+  
+      if (row) {
+        const columns = row.split(','); // Split by comma
+  
+        if (columns.length >= 3) {
+          const id = columns[0].trim();
+          const sourceId = columns[1].trim();
+          const text = columns[2].trim();
+          
+          this.nodes.push({
+            id: id,
+            label: text,
+          });
+          if (sourceId !== '-1') {
+            this.links.push({
+              id: 'A' + id,
+              source: sourceId,
+              target: id,
+            });
+          }
+        }
+      }
+    }
+    this.update$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
   exportFiles() {
     if (this.files && this.files.length > 0) {
       this.files.forEach((fileUrl: string) => {
@@ -159,5 +201,22 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.toastrService.error('No files available for download');
     }
   }
-  
+
+  private updateGraph(storms: StormDto[]) {
+    storms.forEach((storm, index) => {
+      this.count++;
+      this.nodes.push({
+        id: storm.id,
+        label: storm.text,
+      });
+      this.links.push({
+        id: 'A' + storm.id,
+        source: this.previousNode,
+        target: storm.id,
+      });
+    });
+    this.storms = storms;
+    this.update$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
 }
