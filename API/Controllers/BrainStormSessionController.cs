@@ -44,7 +44,7 @@ namespace API.Controllers
             return Ok(storms);
         }
         
-        //[Cached(600)]
+        [Cached(600)]
         [HttpGet("storm")]
         //[Authorize]
         public async Task<ActionResult<IReadOnlyList<StormDto>>> GetStorms(string parentStormId)
@@ -60,6 +60,7 @@ namespace API.Controllers
             return Ok(stormChildren);
         }
 
+        [Cached(600)]
         [HttpPost("create-storm")]
         //[Authorize]
         public async Task<ActionResult<IReadOnlyList<StormDto>>> GetAiSuggestions(string prompt)
@@ -106,6 +107,7 @@ namespace API.Controllers
             return Ok(suggestions);
         }
 
+        [Cached(600)]
         [HttpPost("create-database-schema")]
         public async Task<ActionResult<IReadOnlyList<string>>> CreateDatabaseSchema(IFormFile image)
         {   
@@ -145,7 +147,6 @@ namespace API.Controllers
                 string error = process.StandardError.ReadToEnd();
 
                 process.WaitForExit();
-                Console.WriteLine("Reached here");
                 Console.WriteLine(output);
             }
 
@@ -157,6 +158,7 @@ namespace API.Controllers
             return Ok(fileUrls);
         }
 
+        //[Cached(600)]
         [HttpPost("create-database-csv")]
         public async Task<ActionResult<IReadOnlyList<string>>> CreateDatabaseCsv(IFormFile image)
         {   
@@ -165,18 +167,19 @@ namespace API.Controllers
                 return BadRequest(new ApiResponse(400, "No image uploaded"));
             }
 
-            var filePath = Path.Combine("Content", "images", "output.csv");
+            var filePath = Path.Combine("Content", "images", image.FileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
             }
 
+            var fileName = image.FileName;
             // Run the Python script
             var startInfo = new ProcessStartInfo
             {
                 FileName = "python",
-                Arguments = $"imgtocsv.py",
+                Arguments = $"imgtocsv.py \"{fileName}\"",
                 WorkingDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts"),
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -196,14 +199,13 @@ namespace API.Controllers
                 string error = process.StandardError.ReadToEnd();
 
                 process.WaitForExit();
-                Console.WriteLine("Reached here");
                 Console.WriteLine(output);
             }
 
             // Generate file URLs instead of returning PhysicalFileResult
             var fileUrls = new List<string>();
 
-            fileUrls.Add($"{Request.Scheme}://{Request.Host}/Content/schemas/output.csv");
+            fileUrls.Add($"{Request.Scheme}://{Request.Host}/Content/csv/output.csv");
 
             return Ok(fileUrls);
         }

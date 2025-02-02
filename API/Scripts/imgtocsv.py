@@ -2,6 +2,7 @@ import os
 import csv
 import anthropic
 import base64
+import sys
 from PIL import Image, UnidentifiedImageError
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,7 +30,7 @@ def encode_image(image_path):
         print(f"❌ Error: Image '{image_path}' not found.")
         exit()
 
-def mindmap_to_csv(mindmap_text, csv_filename):
+def mindmap_to_csv(mindmap_text, file_name,csv_filename):
     """
     Sends mindmap text to Claude for transformation into CSV format.
     The returned lines are expected to match:
@@ -43,7 +44,7 @@ def mindmap_to_csv(mindmap_text, csv_filename):
         f"DO NOT INCLUDE ANY HEADERS OR FOOTERS OR OTHER TEXT IN THE OUTPUT"
     )
 
-    encoded_image = encode_image("mindmap.png")
+    encoded_image = encode_image(f"..\\Content\\images\\{file_name}")
 
     message = client.messages.create(
         model="claude-3-5-sonnet-20241022",
@@ -56,9 +57,9 @@ def mindmap_to_csv(mindmap_text, csv_filename):
         ]
     )
     
-    # print(message.content[0].text)
+    print(message.content[0].text)
     csv_lines = message.content[0].text
-    with open(csv_filename, "w") as csv_file:
+    with open(f"..\\Content\\csv\\{csv_filename}", "w") as csv_file:
         csv_file.write(csv_lines)
 
 
@@ -70,5 +71,10 @@ storms-id,parent-id,text
 3,1,This is 2nd child
 4,2,This is 1st childs grandchild
     """
+    if len(sys.argv) < 2:
+        print("Usage: python script.py <file_name>")
+        sys.exit(1)
+    
+    file_name = sys.argv[1]
 
-    mindmap_to_csv(mindmap_input, "output.csv")
+    mindmap_to_csv(mindmap_input, file_name,"output.csv")

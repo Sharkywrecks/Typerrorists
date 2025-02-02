@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   links: Edge[] = [];
 
   nodes: Node[] = [];
-  files!: any;
+  files: any[] = [];
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     private brainStormSessionService: BrainStormSessionService,
     private changeDetectorRef: ChangeDetectorRef,
