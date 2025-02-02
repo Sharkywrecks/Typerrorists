@@ -10,7 +10,10 @@
         </button>
       </span>
     </div>
-    <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="UploadToSchema" />
+    <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" url="http://localhost:5004/Content" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUploadAuto($event)" [auto]="true" chooseLabel="UploadToSchema" />
+    @if (files && files.length > 0) {
+      <p-button icon="pi pi-external-link" label="Schema" (click)="exportFiles()" />
+    }
   </div>
   <ngx-graph
   class="chart-container"

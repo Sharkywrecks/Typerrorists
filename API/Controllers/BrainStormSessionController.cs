@@ -106,21 +106,21 @@ namespace API.Controllers
         }
 
         [HttpPost("create-database-schema")]
-        //[Authorize]
-        public async Task<ActionResult<PhysicalFileResult>> CreateDatabaseSchema(IFormFile image)
+        public async Task<IActionResult> CreateDatabaseSchema(IFormFile image)
         {   
             if (image == null || image.Length == 0)
             {
                 return BadRequest(new ApiResponse(400, "No image uploaded"));
             }
 
-            var filePath = Path.Combine("Content/images", "brainstorm.png");
+            var filePath = Path.Combine("Content", "images", "brainstorm.png");
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await image.CopyToAsync(stream);
             }
-            // Prepare process info
+
+            // Run the Python script
             var startInfo = new ProcessStartInfo
             {
                 FileName = "python",
@@ -144,31 +144,15 @@ namespace API.Controllers
 
                 process.WaitForExit();
                 Console.WriteLine(output);
-                var result = output.Split(",");
-
-                foreach (var file in result)
-                {
-                    schemaFiles.Add(file.Trim());
-                }
             }
 
-            if (schemaFiles.Count == 2)
-            {
-                var file1 = Path.Combine("Content/schemas", schemaFiles[0]);
-                var file2 = Path.Combine("Content/schemas", schemaFiles[1]);
+            // Generate file URLs instead of returning PhysicalFileResult
+            schemaFiles = new string[] {"database_schema", "database_schema.png"}.ToList();
+            var fileUrls = schemaFiles.Select(file => 
+                $"{Request.Scheme}://{Request.Host}/Content/schemas/{file}"
+            ).ToList();
 
-                var files = new List<PhysicalFileResult>
-                {
-                    PhysicalFile(file1, "application/octet-stream"),
-                    PhysicalFile(file2, "application/octet-stream")
-                };
-
-                return Ok(files);
-            }
-            else
-            {
-                return BadRequest(new ApiResponse(400, "Schema generation failed"));
-            }
+            return Ok(fileUrls);
         }
     }
 }
